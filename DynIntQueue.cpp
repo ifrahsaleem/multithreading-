@@ -1,11 +1,11 @@
 #include <iostream>
-#include "HW8DynIntQueue.h"
+#include "DynIntQueue.h"
 using namespace std;
 
 //************************************************
 // Constructor. Generates an empty queue         *
 //************************************************
-HW8DynIntQueue::HW8DynIntQueue()
+DynIntQueue::DynIntQueue()
 {
 	front = NULL;
 	rear = NULL;
@@ -17,7 +17,7 @@ HW8DynIntQueue::HW8DynIntQueue()
 //************************************************
 // Copy Constructor.                             *
 //************************************************
-HW8DynIntQueue::HW8DynIntQueue(const HW8DynIntQueue& rhs)
+DynIntQueue::DynIntQueue(const DynIntQueue& rhs)
 {
 	front = NULL;
 	rear = NULL;
@@ -39,7 +39,7 @@ HW8DynIntQueue::HW8DynIntQueue(const HW8DynIntQueue& rhs)
 // Function enqueue inserts the value in num *
 // at the rear of the queue.                 *
 //********************************************
-void HW8DynIntQueue::enqueue(int num)
+void DynIntQueue::enqueue(int num)
 {
 	 if (isEmpty())   //if the queue is empty
 	{	//make it the first element
@@ -62,7 +62,7 @@ void HW8DynIntQueue::enqueue(int num)
 // Function dequeue removes the value at the   *
 // front of the queue, and copies it into num. *
 //**********************************************
-void HW8DynIntQueue::dequeue(int & num)
+void DynIntQueue::dequeue(int & num)
 {
 	CustomerNode* temp;
 	if (isEmpty())
@@ -84,7 +84,7 @@ void HW8DynIntQueue::dequeue(int & num)
 // Function getCurrentSize returns current    *
 // size of the queue.						  *
 //*********************************************
-int HW8DynIntQueue::getCurrentSize() const
+int DynIntQueue::getCurrentSize() const
 {
 	return currentSize;
 }
@@ -93,7 +93,7 @@ int HW8DynIntQueue::getCurrentSize() const
 // Function isEmpty returns true if the queue *
 // is empty, and false otherwise.             *
 //*********************************************
-bool HW8DynIntQueue::isEmpty() const
+bool DynIntQueue::isEmpty() const
 {
 	if (front == NULL)
 		return true;
@@ -104,7 +104,7 @@ bool HW8DynIntQueue::isEmpty() const
 //*********************************************
 // Assignment Operator						  *
 //*********************************************
-HW8DynIntQueue& HW8DynIntQueue::operator=(const HW8DynIntQueue& rhs)
+DynIntQueue& DynIntQueue::operator=(const DynIntQueue& rhs)
 {
 	if (this != &rhs) //self assignment check
 	{
@@ -131,7 +131,7 @@ HW8DynIntQueue& HW8DynIntQueue::operator=(const HW8DynIntQueue& rhs)
 // Function clear dequeues all the elements  *
 // in the queue.                             *
 //********************************************
-HW8DynIntQueue::~HW8DynIntQueue()
+DynIntQueue::~DynIntQueue()
 {
 	int value;   // Dummy variable for dequeue
 
