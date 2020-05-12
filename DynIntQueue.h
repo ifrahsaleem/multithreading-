@@ -1,5 +1,5 @@
-#ifndef HW8DynIntQueue_H
-#define HW8DynIntQueue_H
+#ifndef DynIntQueue_H
+#define DynIntQueue_H
 
 struct CustomerNode
 {
@@ -12,7 +12,7 @@ struct CustomerNode
 	}
 };
 
-class HW8DynIntQueue
+class DynIntQueue
 {
 private:
 	// These track the front and rear of the queue.
@@ -21,15 +21,15 @@ private:
 	int currentSize; // maxsize kalkacak
 public:
 	// Constructor.
-	HW8DynIntQueue();
-	HW8DynIntQueue(const HW8DynIntQueue& rhs);
+	DynIntQueue();
+	DynIntQueue(const HW8DynIntQueue& rhs);
 	// Member functions.
 	int getCurrentSize() const;
-	HW8DynIntQueue& operator=(const HW8DynIntQueue& rhs);
+	DynIntQueue& operator=(const HW8DynIntQueue& rhs);
 	void enqueue(int id);
 	void dequeue(int& id);
 	bool isEmpty() const;
 	//Destructor
-	~HW8DynIntQueue();
+	~DynIntQueue();
 };
 #endif
