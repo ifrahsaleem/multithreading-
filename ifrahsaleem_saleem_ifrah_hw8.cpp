@@ -1,0 +1,171 @@
+#include <iostream>
+#include <thread>
+#include "HW8DynIntQueue.h"
+#include <random>
+#include <ctime>
+#include <chrono>
+#include <time.h>
+#include <mutex>
+#include <iomanip>
+using namespace std;
+
+HW8DynIntQueue myQueue;
+int globalsize = myQueue.getCurrentSize();
+int counter = 0; //for keeping track of number of customers
+mutex myMutex, coutMutex;
+int total_customer_count, cashier2_threshold, min_arrival, max_arrival, min_checkout_time, max_checkout_time;
+
+int random_range(const int & min, const int & max)
+{
+	static mt19937 generator(time(0));
+	uniform_int_distribution<int> distribution(min, max);
+	return distribution(generator);
+}
+
+void customer()
+{
+	for(int i = 1; i <= total_customer_count; i++) //continue adding customers to queue until max is reached
+	{
+		myMutex.lock();
+		if (myQueue.getCurrentSize() != total_customer_count) 
+		{  
+			myQueue.enqueue(i);
+			int size = myQueue.getCurrentSize();
+			myMutex.unlock();
+
+			coutMutex.lock();
+			time_t tt = chrono::system_clock::to_time_t(chrono::system_clock::now()); 
+			struct tm *ptm = new struct tm; 
+			localtime_s(ptm, &tt); 
+			cout <<"New customer with ID "<< i << " has arrived (queue size is "<< size << ")"<<put_time(ptm,"%X") <<endl;
+			coutMutex.unlock();
+		}
+		else
+		{
+			myMutex.unlock();
+		}
+		int time_in_seconds = random_range(min_arrival,max_arrival); //sleep between customers
+		this_thread::sleep_for(chrono::seconds(time_in_seconds));
+	}
+
+}
+
+void cashier(int cashier_id)
+{
+	int time_in_seconds = random_range(min_checkout_time,max_checkout_time);
+	this_thread::sleep_for(chrono::seconds(time_in_seconds));
+	int size1, size2;
+	int item, items;
+
+	while(counter != total_customer_count) //continue loop until all customers are done 
+	{	
+		myMutex.lock();
+		if(cashier_id == 2 && myQueue.getCurrentSize() >= cashier2_threshold) // for cashier 2
+		{	
+			if (!myQueue.isEmpty()) 
+			{  
+				myQueue.dequeue(items);
+				size1 = myQueue.getCurrentSize();
+				counter++;
+				myMutex.unlock();
+				
+				coutMutex.lock();
+				time_t tt = chrono::system_clock::to_time_t(chrono::system_clock::now()); 
+				struct tm *ptm = new struct tm; 
+				localtime_s(ptm, &tt); 
+				cout << "Cashier 2 started transaction with customer " << items << "(queue size is " << size1 << "):" << put_time(ptm,"%X") <<endl;
+				coutMutex.unlock();
+			
+				int time_in_seconds = random_range(min_checkout_time,max_checkout_time); //time taken to deal with customer 
+				this_thread::sleep_for(chrono::seconds(time_in_seconds));
+
+				coutMutex.lock();
+				tt = chrono::system_clock::to_time_t(chrono::system_clock::now()); 
+				ptm = new struct tm; 
+				localtime_s(ptm, &tt); 
+				cout << "Cashier 2 finished transaction with customer " << items << " " << put_time(ptm,"%X") <<endl;
+				coutMutex.unlock();
+			}
+			else
+			{
+				myMutex.unlock();
+			}
+		}
+
+		else //for cashier 1
+		{
+			if (!myQueue.isEmpty()) 
+			{  
+				myQueue.dequeue(item);
+				size2 = myQueue.getCurrentSize();
+				counter++;
+				myMutex.unlock();
+
+				coutMutex.lock();
+				time_t tt = chrono::system_clock::to_time_t(chrono::system_clock::now()); //getting local time 
+				struct tm *ptm = new struct tm; 
+				localtime_s(ptm, &tt); 
+
+				cout << "Cashier 1 started transaction with customer " << item << "(queue size is " << size2 << "):" << put_time(ptm,"%X") <<endl;
+				coutMutex.unlock();
+			
+				int time_in_seconds = random_range(min_checkout_time,max_checkout_time); // time taken to deal with customer 
+				this_thread::sleep_for(chrono::seconds(time_in_seconds));
+
+				coutMutex.lock();
+				tt = chrono::system_clock::to_time_t(chrono::system_clock::now()); 
+				ptm = new struct tm; 
+				localtime_s(ptm, &tt); 
+				cout << "Cashier 1 finished transaction with customer " << item << " " << put_time(ptm,"%X") <<endl; 
+				coutMutex.unlock();
+			}
+			else
+			{
+				myMutex.unlock();
+			}
+		}
+	}
+}
+
+
+int main()
+{
+	cout<< "Please enter total number of customers: " ;
+	cin >> total_customer_count;
+
+	cout << "Please enter the number of customers waiting in the queue to open the second cashier: " ;
+	cin >> cashier2_threshold;
+
+	cout << "Please enter the inter-arrival time range between two customers: " << endl << "Min: " ;
+	cin >> min_arrival ;
+	cout << "Max: ";
+	cin >> max_arrival;
+
+	cout << "Please enter the checkout time range of cashiers: " << endl << "Min: " ;
+	cin >> min_checkout_time ;
+	cout << "Max: ";
+	cin >> max_checkout_time;
+
+	time_t tt = chrono::system_clock::to_time_t(chrono::system_clock::now()); 
+	struct tm *ptm = new struct tm; 
+	localtime_s(ptm, &tt); 
+	
+	cout << "Simulation starts " << put_time(ptm,"%X") <<endl;
+
+	thread thr0(customer);
+	thread thr1(cashier,1);
+	thread thr2(cashier,2);
+
+	thr0.join();
+	thr1.join();
+	thr2.join();
+
+	tt = chrono::system_clock::to_time_t(chrono::system_clock::now()); 
+	ptm = new struct tm; 
+	localtime_s(ptm, &tt); 
+
+	cout << "End of the simulation ends: " << put_time(ptm,"%X") << endl;
+
+	return 0;
+}
+
