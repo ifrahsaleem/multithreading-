@@ -9,7 +9,7 @@
 #include <iomanip>
 using namespace std;
 
-HW8DynIntQueue myQueue;
+DynIntQueue myQueue;
 int globalsize = myQueue.getCurrentSize();
 int counter = 0; //for keeping track of number of customers
 mutex myMutex, coutMutex;
