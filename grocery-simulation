@@ -1,6 +1,6 @@
 #include <iostream>
 #include <thread>
-#include "HW8DynIntQueue.h"
+#include "DynIntQueue.h"
 #include <random>
 #include <ctime>
 #include <chrono>
